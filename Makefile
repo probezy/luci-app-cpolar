@@ -6,14 +6,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-cpolar
-PKG_VERSION:=1.0.2
+PKG_VERSION:=1.0.4
 PKG_RELEASE:=1
 
 PKG_LICENSE:=MIT
 PKG_MAINTAINER:=Michael Zhang <probezy@gmail.com>
 
 LUCI_TITLE:=LuCI support for Cpolar
-LUCI_DEPENDS:=+jshn +luci-lib-jsonc +cpolar
+LUCI_DEPENDS:=+jshn +luci-lib-jsonc +lua +libuci-lua +cpolar
 LUCI_PKGARCH:=all
 
 define Package/$(PKG_NAME)/conffiles
@@ -33,6 +33,12 @@ chmod 755 "$${IPKG_INSTROOT}/etc/init.d/cpolar" >/dev/null 2>&1
 ln -sf "../init.d/cpolar" \
 	"$${IPKG_INSTROOT}/etc/rc.d/S99cpolar" >/dev/null 2>&1
 
+	/etc/init.d/cpolar enable >/dev/null 2>&1
+	status=$(uci get cpolar.main.enabled 2>/dev/null)
+		if [ "$status" == "1" ]; then
+		/etc/init.d/cpolar reload
+		rm -rf /tmp/luci-indexcache /tmp/luci-modulecache
+	fi
 exit 0
 endef
 
@@ -43,15 +49,14 @@ if [ -s "$${IPKG_INSTROOT}/etc/rc.d/S99cpolar" ] ; then
 	rm -f "$${IPKG_INSTROOT}/etc/rc.d/S99cpolar"
 fi
 
-if [ -s "$${IPKG_INSTROOT}/etc/init.d/cpolar" ] ; then
-	rm -f "$${IPKG_INSTROOT}/etc/init.d/cpolar"
+if [ -z "$${IPKG_INSTROOT}" ]; then
+     /etc/init.d/cpolar disable
+     /etc/init.d/cpolar stop
+uci -q batch <<-EOF >/dev/null 2>&1
+	delete ucitrack.@cpolar[-1]
+	commit ucitrack
+EOF
 fi
-
-
-if [ -z "$${IPKG_INSTROOT}" ] ; then
-	rm -rf /tmp/luci-indexcache /tmp/luci-modulecache
-fi
-
 exit 0
 endef
 

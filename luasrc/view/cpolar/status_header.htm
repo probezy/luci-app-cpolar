@@ -13,18 +13,18 @@ local dsp = require "luci.dispatcher"
 
 <script type="text/javascript">//<![CDATA[
 	XHR.poll(5, '<%=dsp.build_url("admin/services/cpolar/status")%>', null,
-		function (x, data)
-		{
-			if (x.status !== 200 || !data)
-			{
-				return;
+	function (x, data) {
+		var cpolarStatusElm = document.getElementById('cpolar_status');
+		if (data && cpolarStatusElm) {
+			if (data.running) {
+				var links = '<em><b><font color=green>cpolar <%:RUNNING%></font></b></em>';
+				cpolarStatusElm.innerHTML = links;
+			} else {
+				cpolarStatusElm.innerHTML = '<em><b><font color=red>cpolar <%:NOT RUNNING%></font></b></em>';
 			}
-			var cpolarStatusElm = document.getElementById('cpolar_status');
-			cpolarStatusElm.innerHTML = data.running
-				? '<%:Running%>'
-				: '<%:Not Running%>';
 		}
-	);
+	}
+);
 
 	(new XHR()).get('<%=dsp.build_url("admin/services/cpolar/version")%>', null,
 		function(x, data)

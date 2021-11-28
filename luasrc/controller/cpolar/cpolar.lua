@@ -29,13 +29,13 @@ function index()
 		arcombine(cbi("cpolar/tunnel-list"), cbi("cpolar/tunnel-detail")),
 		_("Tunnel"), 2).leaf = true
 
-		-- entry({"admin", "services", "cpolar", "about"},form("v2ray/about"), _("About"), 9)
+		entry({"admin", "services", "cpolar", "log"}, form("cpolar/log"),_("Log"), 30).leaf = true
 
-		entry({"admin", "services", "cpolar", "status"}, call("action_status"))
+		entry({"admin", "services", "cpolar", "status"}, call("action_status")).leaf = true
 
-		entry({"admin", "services", "cpolar", "version"}, call("action_version"))
-
-
+		entry({"admin", "services", "cpolar", "version"}, call("action_version")).leaf = true
+		
+		entry({"admin", "services", "cpolar", "logtail"}, call("action_logtail")).leaf = true
 	end
 
 
@@ -98,3 +98,16 @@ function index()
 		http.write_json(info)
 	end
 	
+	function action_logtail()
+		local fs = require "nixio.fs"
+		local log_path = "/var/log/cpolar-access.log"
+		local e = {}
+		e.running = luci.sys.call("pidof cpolar >/dev/null") == 0
+		if fs.access(log_path) then
+			e.log = luci.sys.exec("tail -n 100 %s | sed 's/\\x1b\\[[0-9;]*m//g'" % log_path)
+		else
+			e.log = ""
+		end
+		luci.http.prepare_content("application/json")
+		luci.http.write_json(e)
+	end	

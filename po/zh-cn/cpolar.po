@@ -1,6 +1,9 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
+msgid "Cpolar"
+msgstr "Cpolar内网穿透"
+
 #: luasrc/controller/cpolar/cpolar.lua:32
 msgid "About"
 msgstr "关于"

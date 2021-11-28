@@ -42,7 +42,7 @@ opkg upgrade luci-i18n-cpolar-zh-cn
 
 ### Manual install
 
-1. Download ipk files from [release](https://github.com/probezy/cpolar/releases) page
+1. Download ipk files from [release](https://github.com/probezy/openwrt-cpolar/releases) page
 
 2. Upload files to your router
 
