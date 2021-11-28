@@ -44,7 +44,7 @@ function index()
 		local info 
 		local message
 	
-		local pid = util.trim(fs.readfile("/var/run/cpolar.main.pid") or "")
+		local pid = util.trim(fs.readfile("/var/run/cpolar.pid") or "")
 	
 		if pid ~= "" then
 			local file = uci:get("cpolar", "@general[0]", "cpolar_file") or ""
