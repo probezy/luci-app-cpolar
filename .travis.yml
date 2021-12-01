@@ -57,7 +57,7 @@ script:
   - ./scripts/feeds update -a >/dev/null
   - ./scripts/feeds install -a >/dev/null
   - make defconfig
-  - make package/$PACKAGE/{clean,compile} -j2
+  - make package/$PACKAGE/{clean,compile} -j2 || make package/$PACKAGE/{clean,compile} -j1 V=s 
   - find "$SDK_HOME/bin/"
   - find "$SDK_HOME/bin/" -name luci-*-cpolar*.ipk -exec cp {} "$TRAVIS_BUILD_DIR" \;
   - ls -hl "$TRAVIS_BUILD_DIR" | grep .*\.ipk
